@@ -223,7 +223,6 @@ with st.sidebar.form("form_nuevo_filme", clear_on_submit=True):
                     "company": compania.strip()
                 }                
              
-try:
     id_pelicula = guardar_pelicula(nuevo_filme)
 
     st.success("Película guardada correctamente.")
