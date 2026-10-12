@@ -222,13 +222,13 @@ with st.sidebar.form("form_nuevo_filme", clear_on_submit=True):
                     "director": director.strip(),
                     "company": compania.strip()
                 }                
-             id_pelicula = guardar_pelicula(nuevo_filme)
-            st.success("Película guardada correctamente.")
-            st.write("ID del documento:", id_pelicula)
+                
+                id_pelicula = guardar_pelicula(nuevo_filme)
+                st.success("Película guardada correctamente.")
+                st.write("ID del documento:", id_pelicula)
 
-except Exception as e:
-st.error(f"Error al guardar el filme: {e}")
-
+            except Exception as e:
+                st.error(f"Error al guardar el filme: {e}")
 
 ####Comentarios sidebar
 st.sidebar.header("💬 Comentarios de visitantes")
