@@ -7,6 +7,19 @@ from Conexion import obten_conexion
 
 db = firestore.Client.from_service_account_json('keys.json')
 dbMovies=db.collection('Movies')
+st.title("Diagnóstico de Firebase")
+
+try:
+    st.write("Iniciando lectura de películas...")
+    df = cargar_peliculas()
+    st.success("La función terminó correctamente.")
+    st.write("Filas encontradas:", len(df))
+    st.dataframe(df)
+except Exception as e:
+    st.error("Falló la carga de películas")
+    st.exception(e)
+Así podremos ver el erro
+
 
 # Dataset base de la aplicación
 df_movies = cargar_peliculas()
