@@ -1,14 +1,31 @@
 import streamlit as st
+from firebase_admin import credentials
+from google.auth.transport.requests import Request
 
-st.title("Diagnóstico de secretos")
+st.title("Diagnóstico de credenciales")
 
 try:
-    datos = st.secrets["firebase"]
+    datos = dict(st.secrets["firebase"])
 
-    st.write("Tipo de datos:", type(datos).__name__)
-    st.write("Claves disponibles:", list(datos.keys()))
+    st.write("1. Secretos leídos correctamente")
 
-    st.success("Los secretos se han leído correctamente.")
+    # Normalizar los saltos de línea de la clave privada
+    if isinstance(datos.get("private_key"), str):
+        datos["private_key"] = (
+            datos["private_key"].replace("\\n", "\n")
+        )
+
+    st.write("2. Creando credencial de Firebase")
+    certificado = credentials.Certificate(datos)
+
+    st.write("3. Obteniendo credencial de Google")
+    credencial_google = certificado.get_credential()
+
+    st.write("4. Solicitando token")
+    credencial_google.refresh(Request())
+
+    st.success("5. Autenticación correcta")
 
 except Exception as e:
     st.error(f"{type(e).__name__}: {e}")
+    st.exception(e)
