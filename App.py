@@ -4,6 +4,7 @@ import streamlit as st
 from google.cloud import firestore
 from DataFrame_Leer import cargar_peliculas
 from Conexion import obten_conexion
+from DataFrame_Leer import guardar_pelicula
 
 
 db = firestore.Client.from_service_account_json('keys.json')
@@ -220,39 +221,16 @@ with st.sidebar.form("form_nuevo_filme", clear_on_submit=True):
                     "genre": genero.strip(),
                     "director": director.strip(),
                     "company": compania.strip()
-                }
-                st.sidebar.error("Voy a insertar.")
-##########################
-                st.write("1. Preparando inserción...")
+                }                
+             
+try:
+    id_pelicula = guardar_pelicula(nuevo_filme)
 
-    st.write("2. Datos a guardar:", nuevo_filme)
-
-    _, referencia = db.collection("Movies").add(nuevo_filme)
-
-    st.success("Película insertada correctamente.")
-    st.write("ID del documento:", referencia.id)
+    st.success("Película guardada correctamente.")
+    st.write("ID del documento:", id_pelicula)
 
 except Exception as e:
-    st.error(f"Error al insertar: {type(e).__name__}: {e}")
-    st.exception(e)
-
-    ######
-
-                
-                # Insertar documento en Firestore
-                _, referencia = db.collection("Movies").add(
-                    nuevo_filme
-                )
-    
-                st.sidebar.success(
-                    f"Filme registrado correctamente. ID: {referencia.id}"
-                )
-
-            except Exception as e:
-                st.sidebar.error(
-                    f"Error al guardar el filme: {e}"
-                )
-
+    st.error(f"Error al guardar el filme: {e}")
 
 
 ####Comentarios sidebar
