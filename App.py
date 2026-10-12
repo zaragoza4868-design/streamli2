@@ -6,12 +6,8 @@ from DataFrame_Leer import cargar_peliculas
 from Conexion import obten_conexion
 from DataFrame_Leer import guardar_pelicula
 
-
 db = firestore.Client.from_service_account_json('keys.json')
 dbMovies=db.collection('Movies')
-
-
-
 
 # Dataset base de la aplicación
 df_movies = cargar_peliculas()
@@ -19,32 +15,6 @@ df_movies = cargar_peliculas()
 print("Películas cargadas:", len(df_movies))
 print(df_movies)
 ##.dataframe(df_movies)
-
-def obtener_generos():
-    """Devuelve los géneros disponibles."""
-    if "genre" not in df_movies.columns:
-        return []
-
-    return sorted(
-        df_movies["genre"].dropna().unique().tolist()
-    )
-
-
-def filtrar_peliculas(genero):
-    """Filtra las películas por género."""
-    if "genre" not in df_movies.columns:
-        return df_movies.iloc[0:0].copy()
-
-    return df_movies[
-        df_movies["genre"].astype(str).str.casefold()
-        == genero.casefold()
-    ]
-
-
-# Ejemplo de uso
-lista_generos = obtener_generos()
-print("Géneros:", lista_generos)
-
 
 # Configuración del dashboard
 st.set_page_config(
@@ -127,7 +97,7 @@ if buscar:
             st.write(f"Filmes encontrados: {len(resultados)}")
 
 
-####
+####Función para filtrar por director
 def filtrar_por_director(director):
     if "director" not in df_movies.columns:
         return df_movies.iloc[0:0].copy()
@@ -189,9 +159,7 @@ if st.sidebar.button("Filtrar por director", use_container_width=True):
     else:
         st.warning("No hay directores disponibles para seleccionar.")
 
-
-        #####
-        # Formulario para insertar un nuevo filme
+### Formulario para insertar un nuevo filme
 st.sidebar.header("Registrar nuevo filme")
 
 with st.sidebar.form("form_nuevo_filme", clear_on_submit=True):
