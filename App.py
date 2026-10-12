@@ -222,6 +222,24 @@ with st.sidebar.form("form_nuevo_filme", clear_on_submit=True):
                     "company": compania.strip()
                 }
                 st.sidebar.error("Voy a insertar.")
+##########################
+                st.write("1. Preparando inserción...")
+
+try:
+    st.write("2. Datos a guardar:", nuevo_filme)
+
+    _, referencia = db.collection("Movies").add(nuevo_filme)
+
+    st.success("Película insertada correctamente.")
+    st.write("ID del documento:", referencia.id)
+
+except Exception as e:
+    st.error(f"Error al insertar: {type(e).__name__}: {e}")
+    st.exception(e)
+
+    ######3
+
+                
                 # Insertar documento en Firestore
                 _, referencia = db.collection("Movies").add(
                     nuevo_filme
