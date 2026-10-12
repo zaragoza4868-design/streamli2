@@ -7,17 +7,21 @@ from Conexion import obten_conexion
 
 db = firestore.Client.from_service_account_json('keys.json')
 dbMovies=db.collection('Movies')
-st.title("Diagnóstico de Firebase")
+
+
+##
+st.title("Prueba de conexión con Firebase")
 
 try:
-    st.write("Iniciando lectura de películas...")
     df = cargar_peliculas()
-    st.success("La función terminó correctamente.")
-    st.write("Filas encontradas:", len(df))
+    st.success("Conexión completada")
+    st.write("Películas encontradas:", len(df))
     st.dataframe(df)
 except Exception as e:
-    st.error("Falló la carga de películas")
+    st.error("Error durante la conexión")
     st.exception(e)
+
+###
 
 
 
