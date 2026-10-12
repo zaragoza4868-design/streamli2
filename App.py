@@ -30,8 +30,22 @@ try:
     st.success("5. Autenticación correcta")
 
 except Exception as e:
-    st.error(f"{type(e).__name__}: {e}")
-    st.code(traceback.format_exc())
+    import traceback
+
+    st.error(f"Error: {type(e).__name__}: {e}")
+
+    # Mostrar las últimas líneas del error
+    lineas = traceback.format_exc().splitlines()
+    st.code("\n".join(lineas[-15:]))
+
+    # Mostrar versiones de las bibliotecas
+    import google.auth
+    import firebase_admin
+
+    st.write("Versión google-auth:", google.auth.__version__
+             if hasattr(google.auth, "__version__")
+             else "No disponible")
+    st.write("Versión firebase-admin:", firebase_admin.__version__)
 
    
 
