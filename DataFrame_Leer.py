@@ -92,26 +92,3 @@ def convertir_valor(valor):
         return valor["geoPointValue"]
 
     return None
-Este código obtiene las películas directamente de la API REST, convierte los campos de Firestore a valores de Python y recupera todas las páginas de resultados.
-
-Paso 2. Comprueba tu App.py
-Puedes hacer una prueba rápida con:
-
-python
-import streamlit as st
-from DataFrame_Leer import cargar_peliculas
-
-st.title("Catálogo de películas")
-
-try:
-    df = cargar_peliculas()
-
-    if df.empty:
-        st.warning("No se encontraron películas.")
-    else:
-        st.success(f"Películas cargadas: {len(df)}")
-        st.dataframe(df, use_container_width=True)
-
-except Exception as e:
-    st.error(f"Error al cargar películas: {e}")
-    
