@@ -10,20 +10,6 @@ db = firestore.Client.from_service_account_json('keys.json')
 dbMovies=db.collection('Movies')
 
 
-##
-st.title("Prueba de conexión con Firebase")
-
-try:
-    df = cargar_peliculas()
-    st.success("Conexión completada")
-    st.write("Películas encontradas:", len(df))
-    st.dataframe(df)
-except Exception as e:
-    st.error("Error durante la conexión")
-    st.exception(e)
-
-###
-
 
 
 # Dataset base de la aplicación
