@@ -1,33 +1,46 @@
 import streamlit as st
+import requests
+from firebase_admin import credentials
 import firebase_admin
-from firebase_admin import firestore
-from google.api_core import exceptions
 
-st.title("Diagnóstico de lectura Firestore")
+st.title("Diagnóstico de conexión")
 
 try:
-    st.write("1. Creando cliente...")
-    db = firestore.client()
+    datos = dict(st.secrets["firebase"])
 
-    st.write("2. Consultando colección Movies...")
-    consulta = db.collection("Movies").limit(1)
+    cred = credentials.Certificate(datos)
 
-    documentos = list(consulta.stream(timeout=15))
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred)
 
-    st.success(f"Firestore respondió. Documentos encontrados: {len(documentos)}")
+    proyecto = datos["project_id"]
 
-    for documento in documentos:
-        st.write("ID:", documento.id)
-        st.json(documento.to_dict())
+    st.write("Proyecto:", proyecto)
+    st.write("Comprobando acceso a la API de Firestore...")
 
-except exceptions.PermissionDenied as e:
-    st.error("La cuenta de servicio no tiene permiso para leer Firestore.")
-    st.code(str(e))
+    url = (
+        "https://firestore.googleapis.com/v1/"
+        f"projects/{proyecto}/databases/(default)/documents/Movies"
+    )
 
-except exceptions.DeadlineExceeded as e:
-    st.error("Firestore no respondió dentro de los 15 segundos.")
-    st.code(str(e))
+    token = cred.get_credential()
+    from google.auth.transport.requests import Request
+    token.refresh(Request())
+
+    respuesta = requests.get(
+        url,
+        headers={"Authorization": f"Bearer {token.token}"},
+        timeout=15,
+    )
+
+    st.write("Código HTTP:", respuesta.status_code)
+
+    if respuesta.status_code == 200:
+        st.success("La API respondió correctamente.")
+        st.json(respuesta.json())
+    else:
+        st.error("La API respondió con un error.")
+        st.code(respuesta.text[:1500])
 
 except Exception as e:
     st.error(f"{type(e).__name__}: {e}")
-    st.exception(e)
