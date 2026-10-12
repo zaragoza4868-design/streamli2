@@ -1,6 +1,9 @@
 import streamlit as st
 from firebase_admin import credentials
 from google.auth.transport.requests import Request
+import traceback
+
+
 
 st.title("Diagnóstico de credenciales")
 
@@ -27,5 +30,9 @@ try:
     st.success("5. Autenticación correcta")
 
 except Exception as e:
-    st.error(f"{type(e).__name__}: {e}")
-    st.exception(e)
+     st.error(f"{type(e).__name__}: {e}")
+    st.code(traceback.format_exc())
+
+   
+
+
