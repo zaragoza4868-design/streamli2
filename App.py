@@ -30,7 +30,7 @@ try:
     st.success("5. Autenticación correcta")
 
 except Exception as e:
-     st.error(f"{type(e).__name__}: {e}")
+    st.error(f"{type(e).__name__}: {e}")
     st.code(traceback.format_exc())
 
    
