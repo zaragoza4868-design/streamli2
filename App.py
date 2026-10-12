@@ -1,38 +1,32 @@
 import streamlit as st
-import traceback
+import firebase_admin
+from firebase_admin import credentials, firestore
 
-st.title("Diagnóstico de Firebase")
-
-st.write("1. App.py está ejecutándose.")
+st.title("Diagnóstico Firebase")
 
 try:
-    st.write("2. Importando el módulo...")
-    from DataFrame_Leer import obtener_db
+    st.write("A. Aplicación iniciada")
 
-    st.write("3. Inicializando el cliente de Firestore...")
-    db = obtener_db()
+    st.write("B. Leyendo secretos")
+    datos = dict(st.secrets["firebase"])
 
-    st.success("3. Cliente de Firestore creado.")
+    st.write("C. Validando credenciales")
+    cred = credentials.Certificate(datos)
 
-    st.write("4. Consultando la colección Movies...")
+    st.write("D. Inicializando Firebase")
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred)
 
-    documentos = db.collection("Movies").stream(timeout=15)
-    peliculas = list(documentos)
+    st.write("E. Creando cliente Firestore")
+    db = firestore.client()
 
-    st.success(f"Consulta completada: {len(peliculas)} documentos.")
+    st.success("F. Cliente creado")
 
-    if peliculas:
-        datos = []
-        for doc in peliculas:
-            pelicula = doc.to_dict()
-            pelicula["id"] = doc.id
-            datos.append(pelicula)
+    st.write("G. Probando conexión con Firestore")
+    docs = list(db.collection("Movies").limit(1).stream(timeout=15))
 
-        st.dataframe(datos)
-    else:
-        st.warning("La colección Movies no contiene documentos.")
+    st.success(f"Conexión completada. Documentos de prueba: {len(docs)}")
 
 except Exception as e:
-    st.error(f"Error: {type(e).__name__}: {e}")
-    st.code(traceback.format_exc())
-
+    st.error(f"{type(e).__name__}: {e}")
+    st.exception(e)
