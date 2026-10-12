@@ -18,7 +18,7 @@ try:
 except Exception as e:
     st.error("Falló la carga de películas")
     st.exception(e)
-Así podremos ver el erro
+
 
 
 # Dataset base de la aplicación
