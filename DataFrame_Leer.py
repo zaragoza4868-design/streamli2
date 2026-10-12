@@ -1,38 +1,34 @@
+
+import os
+import streamlit as st
 import firebase_admin
 import pandas as pd
-import streamlit as st
 
 from firebase_admin import credentials, firestore
 
-
 @st.cache_resource
 def obtener_db():
+    ruta = os.path.join(os.path.dirname(__file__), "keys.json")
+
+    if not os.path.isfile(ruta):
+        raise FileNotFoundError(
+            f"No se encontró el archivo de credenciales: {ruta}"
+        )
+
     if not firebase_admin._apps:
-        datos = dict(st.secrets["firebase"])
-        cred = credentials.Certificate(datos)
+        cred = credentials.Certificate(ruta)
         firebase_admin.initialize_app(cred)
 
     return firestore.client()
 
-
 def cargar_peliculas():
-    """Lee la colección Movies de Firestore y devuelve un DataFrame."""
-    try:
-        db = obtener_db()
-        documentos = db.collection("Movies").stream()
+    db = obtener_db()
+    documentos = db.collection("Movies").stream()
 
-        registros = []
+    registros = []
+    for documento in documentos:
+        pelicula = documento.to_dict()
+        pelicula["id"] = documento.id
+        registros.append(pelicula)
 
-        for documento in documentos:
-            pelicula = documento.to_dict()
-            pelicula["id"] = documento.id
-            registros.append(pelicula)
-
-        return pd.DataFrame(registros)
-
-    except Exception as e:
-        st.error(f"Error al cargar películas desde Firebase: {e}")
-        return pd.DataFrame()
-    df = pd.DataFrame(registros)
-
-    return df
+    return pd.DataFrame(registros)
